@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MochaMeet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"/>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+        <div class="header">
+            <h1>
+                <i class="fas fa-video" style="color: skyblue"></i>
+                &nbsp;MochaMeet&nbsp;
+                <span style="font-size: medium; color: orange">© MochaTek (2021)</span>
+            </h1>
+            <input type="text" name="roomURL" id="roomURL" readonly onclick="this.select()">
+        </div>
+
+        <div id="videoCall">
+            <div class="contact-name">
+                <h3 id="peerName"></h3>
+            </div>
+            <video class="remote-stream" id="remote-video" autoplay></video>
+            <video class="local-stream" id="local-video" autoplay muted></video>
+            <div class="controls">
+                <button class="toggle-video" onclick="toggleVideo()"><i class="fas fa-video" id="videoBtn"></i></button>
+                <button class="toggle-audio" onclick="toggleAudio()"><i class="fas fa-microphone" id="audioBtn"></i></button>
+                <button class="call-end" onclick="hangUp()"><i class="fas fa-phone"></i></button>
+            </div>
+        </div>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            let roomId = "{{ room }}"
+        </script>
+        <script src="/index.js"></script>
+</body>
+</html>
