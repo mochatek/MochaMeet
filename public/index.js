@@ -6,12 +6,18 @@ const localVideo = document.querySelector('#local-video')
 const remoteVideo = document.querySelector('#remote-video')
 const audioBtn = document.querySelector('#audioBtn')
 const videoBtn = document.querySelector('#videoBtn')
+const streamBtn = document.querySelector('#streamBtn')
 const peerName = document.querySelector('#peerName')
 
-let localStream, remoteStream, isRoomCreator, rtcPeerConnection
+let cameraMode = 'user'
+let localStream, remoteStream, isRoomCreator, rtcPeerConnection, currentStream
 
 const mediaConstraints = {
-    video: true,
+    video: {
+        facingMode: {
+            exact: cameraMode
+        }
+    },
     audio: {
         echoCancellation: true,
         noiseSuppression: true
@@ -120,6 +126,7 @@ async function setLocalStream(mediaConstraints) {
 
     localStream = stream
     localVideo.srcObject = stream
+    currentStream = 'camera'
 }
 
 function addLocalTracks(rtcPeerConnection) {
@@ -195,6 +202,50 @@ function toggleAudio() {
     localStream.getAudioTracks()[0].enabled = !localStream.getAudioTracks()[0].enabled
 }
 
+async function toggleStream() {
+    if(localStream) {
+        localStream.getVideoTracks()[0].stop()
+        localStream.removeTrack(localStream.getVideoTracks()[0])
+    }
+    if(currentStream == 'screen') {
+        try {
+            const newStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
+            localStream.addTrack(newStream.getVideoTracks()[0])
+
+            streamBtn.className = 'fas fa-tablet-alt'
+            currentStream = 'camera'
+        } catch(err) {
+            alert(err.message)
+        }
+    } else if(currentStream == 'camera') {
+        try {
+            const newStream = await navigator.mediaDevices.getDisplayMedia()
+            localStream.addTrack(newStream.getVideoTracks()[0])
+
+            streamBtn.className = 'fas fa-camera'
+            currentStream = 'screen'
+        } catch(err) {
+            alert(err.message)
+        }
+    }
+}
+
+async function toggleCamera() {
+    if(localStream && currentStream == 'camera') {
+        try {
+            cameraMode = cameraMode == 'user'? 'environment' : 'user'
+
+            localStream.getVideoTracks()[0].stop()
+            localStream.removeTrack(localStream.getVideoTracks()[0])
+            const newStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
+            localStream.addTrack(newStream.getVideoTracks()[0])
+        } catch(err) {
+            cameraMode = cameraMode == 'user'? 'environment' : 'user'
+            alert('Unable to switch camera.')
+        }
+    }
+}
+
 function hangUp(event=null) {
     socket.emit('leave', roomId)
     socket.close();
@@ -204,6 +255,10 @@ function hangUp(event=null) {
     if(rtcPeerConnection) {
         rtcPeerConnection.close()
     }
+}
+
+function gotoGitRepo() {
+    window.open('https://github.com/mochatek/MochaMeet', '_blank')
 }
 
 window.onbeforeunload = hangUp

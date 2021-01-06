@@ -23,10 +23,15 @@
             </div>
             <video class="remote-stream" id="remote-video" autoplay></video>
             <video class="local-stream" id="local-video" autoplay muted></video>
-            <div class="controls">
-                <button class="toggle-video" onclick="toggleVideo()"><i class="fas fa-video" id="videoBtn"></i></button>
-                <button class="toggle-audio" onclick="toggleAudio()"><i class="fas fa-microphone" id="audioBtn"></i></button>
-                <button class="call-end" onclick="hangUp()"><i class="fas fa-phone"></i></button>
+            <div class="controls-left">
+                <button class="btn" style="background-color: orange" onclick="toggleStream()"><i class="fas fa-tablet-alt" id="streamBtn"></i></button>
+                <button class="btn" style="background-color: magenta" onclick="toggleCamera()"><i class="fas fa-sync"></i></button>
+                <button class="btn" style="background-color: grey" onclick="gotoGitRepo()"><i class="fas fa-question"></i></button>
+            </div>
+            <div class="controls-right">
+                <button class="btn" style="background-color:green" onclick="toggleVideo()"><i class="fas fa-video" id="videoBtn"></i></button>
+                <button class="btn" style="background-color: blue" onclick="toggleAudio()"><i class="fas fa-microphone" id="audioBtn"></i></button>
+                <button class="btn" style="background-color: red" onclick="hangUp()"><i class="fas fa-phone"></i></button>
             </div>
         </div>
 

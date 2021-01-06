@@ -34,33 +34,26 @@ body{
     bottom: 0;
     left: 40%
 }
-.controls {
+.controls-right {
     position: absolute;
     bottom: 0;
     right: 0;
-    margin-right: 20px;
+    margin-right: 50px;
     margin-bottom: 10px
 }
-.call-end {
-    border: 0 none;
-    padding: 10px 12px;
-    border-radius: 50%;
-    background-color: red;
-    color: white;
+.controls-left {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin-left: 50px;
+    margin-bottom: 10px
 }
-.toggle-audio {
+.btn {
     border: 0 none;
     padding: 10px 12px;
     border-radius: 50%;
-    background-color: blue;
     color: white;
-}
-.toggle-video {
-    border: 0 none;
-    padding: 10px 12px;
-    border-radius: 50%;
-    background-color: green;
-    color: white;
+    opacity: 0.7;
 }
 .header {
     position: fixed;
