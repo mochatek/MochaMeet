@@ -216,6 +216,7 @@ async function toggleStream() {
 
             streamBtn.className = 'fas fa-camera'
             currentStream = 'camera'
+            localVideo.style.transform = 'rotateY(180deg)'
         } catch(err) {
             alert(err.message)
         }
@@ -231,6 +232,7 @@ async function toggleStream() {
 
             streamBtn.className = 'fas fa-tablet-alt'
             currentStream = 'screen'
+            localVideo.style.transform = 'rotateY(0deg)'
         } catch(err) {
             alert(err.message)
         }
