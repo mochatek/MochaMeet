@@ -7,17 +7,13 @@ const remoteVideo = document.querySelector('#remote-video')
 const audioBtn = document.querySelector('#audioBtn')
 const videoBtn = document.querySelector('#videoBtn')
 const streamBtn = document.querySelector('#streamBtn')
+const userBtn = document.querySelector('#userBtn')
 const peerName = document.querySelector('#peerName')
 
-let cameraMode = 'user'
 let localStream, remoteStream, isRoomCreator, rtcPeerConnection, currentStream
 
 const mediaConstraints = {
-    video: {
-        facingMode: {
-            exact: cameraMode
-        }
-    },
+    video: true,
     audio: {
         echoCancellation: true,
         noiseSuppression: true
@@ -204,15 +200,21 @@ function toggleAudio() {
 
 async function toggleStream() {
     if(localStream) {
-        localStream.getVideoTracks()[0].stop()
-        localStream.removeTrack(localStream.getVideoTracks()[0])
+        const videoTrack = localStream.getVideoTracks()[0]
+        videoTrack.stop()
+        localStream.removeTrack(videoTrack)
     }
     if(currentStream == 'screen') {
         try {
             const newStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
             localStream.addTrack(newStream.getVideoTracks()[0])
 
-            streamBtn.className = 'fas fa-tablet-alt'
+        if(rtcPeerConnection) {
+            const sender = rtcPeerConnection.getSenders().find(s => s.track.kind == 'video')
+            sender.replaceTrack(localStream.getVideoTracks()[0])
+        }
+
+            streamBtn.className = 'fas fa-camera'
             currentStream = 'camera'
         } catch(err) {
             alert(err.message)
@@ -222,7 +224,12 @@ async function toggleStream() {
             const newStream = await navigator.mediaDevices.getDisplayMedia()
             localStream.addTrack(newStream.getVideoTracks()[0])
 
-            streamBtn.className = 'fas fa-camera'
+        if(rtcPeerConnection) {
+            const sender = rtcPeerConnection.getSenders().find(s => s.track.kind == 'video')
+            sender.replaceTrack(localStream.getVideoTracks()[0])
+        }
+
+            streamBtn.className = 'fas fa-tablet-alt'
             currentStream = 'screen'
         } catch(err) {
             alert(err.message)
@@ -230,19 +237,13 @@ async function toggleStream() {
     }
 }
 
-async function toggleCamera() {
-    if(localStream && currentStream == 'camera') {
-        try {
-            cameraMode = cameraMode == 'user'? 'environment' : 'user'
-
-            localStream.getVideoTracks()[0].stop()
-            localStream.removeTrack(localStream.getVideoTracks()[0])
-            const newStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
-            localStream.addTrack(newStream.getVideoTracks()[0])
-        } catch(err) {
-            cameraMode = cameraMode == 'user'? 'environment' : 'user'
-            alert('Unable to switch camera.')
-        }
+async function toggleUser() {
+    if(localVideo.style.display == '') {
+        localVideo.style.display = 'none'
+        userBtn.className = 'fas fa-eye-slash'
+    } else {
+        localVideo.style.display = ''
+        userBtn.className = 'fas fa-eye'
     }
 }
 
@@ -255,6 +256,7 @@ function hangUp(event=null) {
     if(rtcPeerConnection) {
         rtcPeerConnection.close()
     }
+    alert('Call Ended.')
 }
 
 function gotoGitRepo() {
