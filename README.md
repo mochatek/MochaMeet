@@ -6,7 +6,7 @@ A simple video calling web-app built using [WebRTC](https://developer.mozilla.or
 
 Download and Install [Node.js](https://nodejs.org/en/download/)
 
-Use [npm]() to install the dependancies.
+Use [npm]() to install the dependencies.
 
 ```
 npm install
