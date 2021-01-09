@@ -16,12 +16,7 @@ npm install
 
 Run any of the following commands to start the application.
 
-```
-npm start
-```
-```
-node server
-```
+`npm start` or `node server.js`
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
