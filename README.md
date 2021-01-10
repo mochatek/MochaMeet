@@ -2,6 +2,8 @@
 
 A simple video calling web-app built using [WebRTC](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API), socket.io, node.js and express.js
 
+View the live demo: [MochaMeet](https://mochameetz.glitch.me/)
+
 ## Features
 
 - Private room for conference
