@@ -2,6 +2,15 @@
 
 A simple video calling web-app built using [WebRTC](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API), socket.io, node.js and express.js
 
+## Features
+
+- Private room for conference
+- Sharable link for the room
+- Normal video call
+- Screen sharing (Supported only on desktops)
+- Mute/Unmute audio
+- Disable/Enable video
+
 ## Installation
 
 Download and Install [Node.js](https://nodejs.org/en/download/)
