@@ -1,18 +1,12 @@
+const sp = new SpeechSynthesisUtterance((volume = 2), (rate = 1), (pitch = 1));
+[sp.voice] = speechSynthesis.getVoices();
+
 const user = getName();
 
 navigator.getUserMedia =
   navigator.getUserMedia ||
   navigator.webkitGetUserMedia ||
   navigator.mozGetUserMedia;
-
-const fitBtn = document.querySelector("#fit-btn");
-const localVideo = document.querySelector("#local-video");
-const remoteVideo = document.querySelector("#remote-video");
-const audioBtn = document.querySelector("#audio-btn");
-const videoBtn = document.querySelector("#video-btn");
-const streamBtn = document.querySelector("#stream-btn");
-const userBtn = document.querySelector("#user-btn");
-const peerName = document.querySelector("#peer-name");
 
 let localStream, remoteStream, isRoomCreator, rtcPeerConnection, currentStream;
 
@@ -34,6 +28,15 @@ const rtcConfig = {
   ],
 };
 
+const fitBtn = document.querySelector("#fit-btn");
+const localVideo = document.querySelector("#local-video");
+const remoteVideo = document.querySelector("#remote-video");
+const audioBtn = document.querySelector("#audio-btn");
+const videoBtn = document.querySelector("#video-btn");
+const streamBtn = document.querySelector("#stream-btn");
+const userBtn = document.querySelector("#user-btn");
+const peerName = document.querySelector("#peer-name");
+
 // _________________ SOCKET ___________________
 
 const socket = io();
@@ -41,10 +44,11 @@ const socket = io();
 joinRoom(user);
 
 socket.on("notify", (data) => {
-  console.log(data);
   if (data.status == "join") {
     peerName.innerText = data.user;
+    sp.text = announce(`${data.user} has joined the call`);
   } else {
+    announce(`${peerName.innerText} has left the call`);
     peerName.innerText += " left";
     remoteStream = null;
     remoteVideo.srcObject = null;
@@ -64,7 +68,7 @@ socket.on("room_joined", async (host) => {
 });
 
 socket.on("room_full", () => {
-  alert("The room is full. Please try another one");
+  announce(`This room is full. Please try another one`);
 });
 
 socket.on("start_call", async () => {
@@ -110,6 +114,7 @@ function getName() {
     if (name) name = name.trim();
   }
   localStorage.setItem("name", name);
+  announce(`Hello ${name}, welcome to mho-cha meets`);
   return name;
 }
 
@@ -122,7 +127,7 @@ async function setLocalStream(mediaConstraints) {
   try {
     stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
   } catch (error) {
-    alert(error.message);
+    announce(error.message);
   }
 
   localStream = stream;
@@ -215,50 +220,55 @@ function toggleAudio() {
     !localStream.getAudioTracks()[0].enabled;
 }
 
-async function toggleStream() {
-  if (localStream) {
-    const videoTrack = localStream.getVideoTracks()[0];
-    videoTrack.stop();
-    localStream.removeTrack(videoTrack);
-  }
+function toggleStream() {
   if (currentStream == "screen") {
-    try {
-      const newStream = await navigator.mediaDevices.getUserMedia(
-        mediaConstraints
-      );
-      localStream.addTrack(newStream.getVideoTracks()[0]);
+    navigator.mediaDevices
+      .getUserMedia(mediaConstraints)
+      .then((newStream) => {
+        if (localStream) {
+          const videoTrack = localStream.getVideoTracks()[0];
+          videoTrack && videoTrack.stop();
+          videoTrack && localStream.removeTrack(videoTrack);
+        }
 
-      if (rtcPeerConnection) {
-        const sender = rtcPeerConnection
-          .getSenders()
-          .find((s) => s.track.kind == "video");
-        sender.replaceTrack(localStream.getVideoTracks()[0]);
-      }
+        localStream.addTrack(newStream.getVideoTracks()[0]);
 
-      streamBtn.className = "fas fa-camera";
-      currentStream = "camera";
-      localVideo.style.transform = "rotateY(180deg)";
-    } catch (err) {
-      alert(err.message);
-    }
+        if (rtcPeerConnection) {
+          const sender = rtcPeerConnection
+            .getSenders()
+            .find((s) => s.track.kind == "video");
+          sender.replaceTrack(localStream.getVideoTracks()[0]);
+        }
+
+        streamBtn.className = "fas fa-camera";
+        currentStream = "camera";
+        localVideo.style.transform = "rotateY(180deg)";
+      })
+      .catch((err) => announce(err.message));
   } else if (currentStream == "camera") {
-    try {
-      const newStream = await navigator.mediaDevices.getDisplayMedia();
-      localStream.addTrack(newStream.getVideoTracks()[0]);
+    navigator.mediaDevices
+      .getDisplayMedia()
+      .then((newStream) => {
+        if (localStream) {
+          const videoTrack = localStream.getVideoTracks()[0];
+          videoTrack && videoTrack.stop();
+          videoTrack && localStream.removeTrack(videoTrack);
+        }
 
-      if (rtcPeerConnection) {
-        const sender = rtcPeerConnection
-          .getSenders()
-          .find((s) => s.track.kind == "video");
-        sender.replaceTrack(localStream.getVideoTracks()[0]);
-      }
+        localStream.addTrack(newStream.getVideoTracks()[0]);
 
-      streamBtn.className = "fas fa-external-link-alt";
-      currentStream = "screen";
-      localVideo.style.transform = "rotateY(0deg)";
-    } catch (err) {
-      alert(err.message);
-    }
+        if (rtcPeerConnection) {
+          const sender = rtcPeerConnection
+            .getSenders()
+            .find((s) => s.track.kind == "video");
+          sender.replaceTrack(localStream.getVideoTracks()[0]);
+        }
+
+        streamBtn.className = "fas fa-external-link-alt";
+        currentStream = "screen";
+        localVideo.style.transform = "rotateY(0deg)";
+      })
+      .catch((err) => announce(err.message));
   }
 }
 
@@ -281,7 +291,7 @@ function hangUp(event = null) {
   if (rtcPeerConnection) {
     rtcPeerConnection.close();
   }
-  alert("Call Ended.");
+  announce(`Call ended`);
 }
 
 function gotoGitRepo() {
@@ -296,6 +306,11 @@ async function shareInvite() {
     url,
   };
   await navigator.share(data);
+}
+
+function announce(msg) {
+  sp.text = msg;
+  speechSynthesis.speak(sp);
 }
 
 window.onbeforeunload = hangUp;
