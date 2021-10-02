@@ -1,5 +1,4 @@
 const user = getName();
-const roomURL = window.location.href;
 
 navigator.getUserMedia =
   navigator.getUserMedia ||
@@ -49,7 +48,6 @@ socket.on("notify", (data) => {
     remoteStream = null;
     remoteVideo.srcObject = null;
     rtcPeerConnection && rtcPeerConnection.close();
-    setTimeout(() => window.location.reload(), 1000);
   }
 });
 
@@ -277,6 +275,16 @@ function hangUp(event = null) {
 
 function gotoGitRepo() {
   window.open("https://github.com/mochatek/MochaMeet", "_blank");
+}
+
+async function shareInvite() {
+  const url = window.location.href;
+  const data = {
+    title: "MochaMeetz",
+    text: "Free video calls and screen sharing",
+    url,
+  };
+  await navigator.share(data);
 }
 
 window.onbeforeunload = hangUp;

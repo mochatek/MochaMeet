@@ -36,6 +36,12 @@ header h3 span {
   font-size: 9px;
   color: orange;
 }
+a,
+a:visited,
+a:hover,
+a:active {
+  color: inherit;
+}
 header button {
   margin: 1rem;
   padding: 0.5rem;
@@ -76,6 +82,7 @@ header button {
   height: 100%;
   object-fit: cover;
   background: black;
+  transform: rotateY(180deg);
 }
 .controls {
   height: 10%;
