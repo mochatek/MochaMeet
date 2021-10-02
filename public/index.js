@@ -41,14 +41,15 @@ const socket = io();
 joinRoom(user);
 
 socket.on("notify", (data) => {
+  console.log(data);
   if (data.status == "join") {
     peerName.innerText = data.user;
-    console.log(data.user);
   } else {
-    peerName.innerText = "";
+    peerName.innerText += " left";
     remoteStream = null;
     remoteVideo.srcObject = null;
-    rtcPeerConnection.close();
+    rtcPeerConnection && rtcPeerConnection.close();
+    setTimeout(() => window.location.reload(), 1000);
   }
 });
 
