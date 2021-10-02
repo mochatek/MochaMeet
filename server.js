@@ -35,20 +35,6 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 io.on("connection", (socket) => {
-  // socket.on("leave", (roomId) => {
-  //   try {
-  //     rooms[roomId] = rooms[roomId].filter((id) => id != socket.id);
-  //     delete users[socket.id];
-  //     if (!rooms[roomId]) {
-  //       delete rooms[roomId];
-  //     } else {
-  //       socket.broadcast.to(roomId).emit("notify", { status: "left" });
-  //     }
-  //   } catch (err) {
-  //     console.log({ rooms, users, err });
-  //   }
-  // });
-
   socket.on("disconnect", () => {
     if (socket.id in users) {
       const roomId = users[socket.id].room;
