@@ -5,6 +5,7 @@ navigator.getUserMedia =
   navigator.webkitGetUserMedia ||
   navigator.mozGetUserMedia;
 
+const fitBtn = document.querySelector("#fit-btn");
 const localVideo = document.querySelector("#local-video");
 const remoteVideo = document.querySelector("#remote-video");
 const audioBtn = document.querySelector("#audio-btn");
@@ -181,6 +182,16 @@ function sendIceCandidate(event) {
       label: event.candidate.sdpMLineIndex,
       candidate: event.candidate.candidate,
     });
+  }
+}
+
+function toggleFit() {
+  if (fitBtn.className == "fas fa-compress") {
+    fitBtn.className = "fas fa-expand";
+    remoteVideo.style.objectFit = "contain";
+  } else {
+    fitBtn.className = "fas fa-compress";
+    remoteVideo.style.objectFit = "cover";
   }
 }
 

@@ -59,20 +59,28 @@ header button {
   border-radius: 4px;
   border: 1px solid var(--border);
   position: relative;
+  color: var(--blue);
+  font-size: medium;
 }
 #peer-name {
   position: absolute;
   top: 0;
   left: 0;
-  color: var(--border);
   z-index: 5;
-  font-size: medium;
   padding: 0.3rem;
+}
+#fit {
+  position: absolute;
+  top: 0;
+  right: 50%;
+  z-index: 5;
+  padding: 0.5rem;
 }
 #remote-video {
   width: 50%;
   height: 100%;
   object-fit: cover;
+  transform: rotateY(180deg);
 }
 #local-video {
   position: absolute;
@@ -81,8 +89,8 @@ header button {
   width: 50%;
   height: 100%;
   object-fit: cover;
-  background: black;
   transform: rotateY(180deg);
+  border: 1px solid var(--border);
 }
 .controls {
   height: 10%;
@@ -111,5 +119,8 @@ header button {
     z-index: 1;
     width: 30%;
     height: 30%;
+  }
+  #fit {
+    right: 0;
   }
 }
