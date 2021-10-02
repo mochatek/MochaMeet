@@ -7,41 +7,47 @@
     <meta property="og:description" content="Unlimited Video Calls and Screen Sharing for FREE!">
     <meta property="og:image" content="/favicon.ico">
     <title>MochaMeet</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-        <div class="header">
-            <h1>
-                <i class="fas fa-video" style="color: skyblue"></i>
-                &nbsp;MochaMeet&nbsp;
-                <span style="font-size: medium; color: orange">© MochaTek (2021)</span>
-            </h1>
-            <input type="text" name="roomURL" id="roomURL" readonly onclick="this.select()">
+    <div class="container">
+        <header>
+            <h3>
+                <i class="fas fa-video" style="color: #13cab8;"></i>
+                &nbsp;MochaMeetz
+                <span>&copy; MochaTek 2021</span>
+            </h3>
+            <button onclick="shareInvite()">Share Meeting Invite <i class="fas fa-share-alt"></i></button>
+        </header>
+        <div class="call">
+            <video id="remote-video" autoplay></video>
+            <span id="peer-name">Peername</span>
+            <video id="local-video" autoplay muted></video>
         </div>
-
-        <div id="videoCall">
-            <div class="contact-name">
-                <h3 id="peerName"></h3>
-            </div>
-            <video class="remote-stream" id="remote-video" autoplay></video>
-            <video class="local-stream" id="local-video" autoplay muted></video>
-            <div class="controls-left">
-                <button class="btn" style="background-color: orange" onclick="toggleStream()"><i class="fas fa-camera" id="streamBtn"></i></button>
-                <button class="btn" style="background-color: magenta" onclick="toggleUser()"><i class="fas fa-eye" id="userBtn"></i></button>
-                <button class="btn" style="background-color: grey" onclick="gotoGitRepo()"><i class="fas fa-question"></i></button>
-            </div>
-            <div class="controls-right">
-                <button class="btn" style="background-color:green" onclick="toggleVideo()"><i class="fas fa-video" id="videoBtn"></i></button>
-                <button class="btn" style="background-color: blue" onclick="toggleAudio()"><i class="fas fa-microphone" id="audioBtn"></i></button>
-                <button class="btn" style="background-color: red" onclick="hangUp()"><i class="fas fa-phone"></i></button>
-            </div>
+        <div class="controls">
+            <button class="control" onclick="toggleVideo()">
+                <i class="fas fa-video" id="video-btn"></i>
+            </button>
+            <button class="control" onclick="toggleAudio()">
+                <i class="fas fa-microphone"  id="audio-btn"></i>
+            </button>
+            <button class="control"  onclick="hangUp()">
+                <i class="fas fa-phone-alt" style="color: red"></i>
+            </button>
+            <button class="control" onclick="toggleStream()">
+                <i class="fas fa-camera" id="stream-btn"></i>
+            </button>
+            <button class="control" onclick="toggleUser()">
+                <i class="fas fa-eye" id="user-btn"></i>
+            </button>
         </div>
+    </div>
 
-        <script src="/socket.io/socket.io.js"></script>
-        <script>
-            let roomId = "{{ room }}"
-        </script>
-        <script src="/index.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let roomId = "{{ room }}"
+    </script>
+    <script src="/index.js"></script>
 </body>
 </html>
