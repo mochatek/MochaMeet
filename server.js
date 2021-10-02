@@ -35,17 +35,32 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 io.on("connection", (socket) => {
-  socket.on("leave", (roomId) => {
-    try {
-      rooms[roomId] = rooms[roomId].filter((id) => id != socket.id);
+  // socket.on("leave", (roomId) => {
+  //   try {
+  //     rooms[roomId] = rooms[roomId].filter((id) => id != socket.id);
+  //     delete users[socket.id];
+  //     if (!rooms[roomId]) {
+  //       delete rooms[roomId];
+  //     } else {
+  //       socket.broadcast.to(roomId).emit("notify", { status: "left" });
+  //     }
+  //   } catch (err) {
+  //     console.log({ rooms, users, err });
+  //   }
+  // });
+
+  socket.on("disconnect", () => {
+    if (socket.id in users) {
+      const roomId = users[socket.id].room;
       delete users[socket.id];
-      if (!rooms[roomId]) {
-        delete rooms[roomId];
-      } else {
-        socket.broadcast.to(roomId).emit("notify", { status: "left" });
+      if (roomId in rooms) {
+        rooms[roomId] = rooms[roomId].filter((id) => id != socket.id);
+        if (rooms[roomId].length) {
+          socket.broadcast.to(roomId).emit("notify", { status: "left" });
+        } else {
+          delete rooms[roomId];
+        }
       }
-    } catch (err) {
-      console.log({ rooms, users, err });
     }
   });
 
@@ -61,13 +76,13 @@ io.on("connection", (socket) => {
     if (numberOfClients == 0) {
       socket.join(roomId);
       rooms[roomId].push(socket.id);
-      users[socket.id] = user;
+      users[socket.id] = { name: user, room: roomId };
       socket.emit("room_created");
     } else if (numberOfClients == 1) {
-      const host = users[rooms[roomId][0]];
+      const host = users[rooms[roomId][0]].name;
       socket.join(roomId);
       rooms[roomId].push(socket.id);
-      users[socket.id] = user;
+      users[socket.id] = { name: user, room: roomId };
       socket.emit("room_joined", host);
       socket.broadcast.to(roomId).emit("notify", { status: "join", user });
     } else {

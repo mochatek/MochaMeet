@@ -39,21 +39,20 @@ const peerName = document.querySelector("#peer-name");
 
 // _________________ SOCKET ___________________
 
-const socket = io();
+const socket = io(window.location.origin, {
+  "sync disconnect on unload": true,
+});
 
 joinRoom(user);
 
 socket.on("notify", (data) => {
   if (data.status == "join") {
     peerName.innerText = data.user;
-    sp.text = announce(`${data.user} has joined the call`);
+    announce(`${data.user} has joined the call`);
   } else {
     announce(`${peerName.innerText} has left the call`);
     peerName.innerText += " left";
-    remoteStream = null;
-    remoteVideo.srcObject = null;
-    rtcPeerConnection && rtcPeerConnection.close();
-    setTimeout(() => (window.location.href = window.location.origin), 500);
+    hangUp();
   }
 });
 
@@ -115,7 +114,6 @@ function getName() {
     if (name) name = name.trim();
   }
   localStorage.setItem("name", name);
-  announce(`Hello ${name}, welcome to mho-cha meets`);
   return name;
 }
 
@@ -284,13 +282,10 @@ async function toggleUser() {
 }
 
 function hangUp() {
-  socket.emit("leave", roomId);
-  socket.close();
-  peerName.innerText = "";
   remoteStream = null;
   remoteVideo.srcObject = null;
   rtcPeerConnection && rtcPeerConnection.close();
-  setTimeout(() => (window.location.href = window.location.origin), 500);
+  window.location.href = window.location.origin;
 }
 
 function gotoGitRepo() {
@@ -311,5 +306,3 @@ function announce(msg) {
   sp.text = msg;
   speechSynthesis.speak(sp);
 }
-
-window.onbeforeunload = hangUp;
