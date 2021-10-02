@@ -53,6 +53,7 @@ socket.on("notify", (data) => {
     remoteStream = null;
     remoteVideo.srcObject = null;
     rtcPeerConnection && rtcPeerConnection.close();
+    setTimeout(() => (window.location.href = window.location.origin), 500);
   }
 });
 
@@ -282,16 +283,14 @@ async function toggleUser() {
   }
 }
 
-function hangUp(event = null) {
+function hangUp() {
   socket.emit("leave", roomId);
   socket.close();
   peerName.innerText = "";
   remoteStream = null;
   remoteVideo.srcObject = null;
-  if (rtcPeerConnection) {
-    rtcPeerConnection.close();
-  }
-  announce(`Call ended`);
+  rtcPeerConnection && rtcPeerConnection.close();
+  setTimeout(() => (window.location.href = window.location.origin), 500);
 }
 
 function gotoGitRepo() {
